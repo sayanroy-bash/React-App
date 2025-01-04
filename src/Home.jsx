@@ -2,6 +2,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ValidationContext } from "./ValidationContext";
+import { useEffect } from "react";
 
 function Home() {
   const [isVerified, setIsVerified] = useState(false);
@@ -9,13 +10,15 @@ function Home() {
   const { setValidated } = useContext(ValidationContext);
 
   const handleRecaptcha = (token) => {
-    setIsVerified(!!token);
+    setIsVerified(!!token)
   };
 
-  const handleSubmit = () => {
-    setValidated(true);
-    navigate("/protected");
-  };
+  useEffect(()=>{
+    if(isVerified){
+      setValidated(true)
+      navigate("/protected")
+    }
+  },[isVerified])
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -25,17 +28,6 @@ function Home() {
           onChange={handleRecaptcha}
           className="mb-6"
         />
-        <button
-          onClick={handleSubmit}
-          disabled={!isVerified}
-          className={`px-6 py-3 rounded-lg text-white font-semibold transition-colors ${
-            isVerified
-              ? "bg-green-500 hover:bg-green-600 cursor-pointer"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-        >
-          Fetch Products
-        </button>
       </div>
     </div>
   );
